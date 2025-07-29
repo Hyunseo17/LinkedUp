@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+li:hover{
+    cursor: pointer;
+    color: gray;
+}
