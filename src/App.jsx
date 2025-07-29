@@ -11,6 +11,7 @@ const App = () => {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [tempName, setTempName] = useState("");
   const [responses, setResponses] = useState([]); // {name, cells}
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const gridRef = useRef(null);
 
   // Handle mouseup anywhere on the document to stop selection
@@ -52,10 +53,47 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 pl-50 pr-50">
+      {/* Drawer Menu Button */}
+      <button
+        onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors"
+      >
+        <div className="w-6 h-6 flex flex-col justify-center items-center">
+          <div className={`w-5 h-0.5 bg-gray-600 transition-all ${isDrawerOpen ? 'rotate-45 translate-y-1' : ''}`}></div>
+          <div className={`w-5 h-0.5 bg-gray-600 my-1 transition-all ${isDrawerOpen ? 'opacity-0' : ''}`}></div>
+          <div className={`w-5 h-0.5 bg-gray-600 transition-all ${isDrawerOpen ? '-rotate-45 -translate-y-1' : ''}`}></div>
+        </div>
+      </button>
+
+      {/* Drawer Overlay - Very transparent */}
+      {isDrawerOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-10 z-40"
+          onClick={() => setIsDrawerOpen(false)}
+        ></div>
+      )}
+
+      {/* Drawer */}
+      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6">
+          <h2 className="text-xl font-bold mb-6">Menu</h2>
+          <button
+            className="w-full py-3 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            onClick={() => {
+              // Handle edit event logic here
+              console.log('Edit Event clicked');
+              setIsDrawerOpen(false);
+            }}
+          >
+            Edit Event
+          </button>
+        </div>
+      </div>
+
       <input
         type="text"
         placeholder="Enter title..."
-        className="text-4xl mb-4 border-none ml-22 w-140 mt-6"
+        className="text-4xl mb-4 border-none ml-22 w-140 mt-10"
         onKeyDown={(e) => { //Event handler for pressing enter
           if (e.key === "Enter") {
             e.preventDefault();      // prevents form submission or line breaks
@@ -162,7 +200,7 @@ const App = () => {
           {!isSelecting && !showNamePrompt ? (
             <button 
               type="button"
-              className="border py-1.5 px-4 rounded bg-gray-100 hover:bg-green-300 hover:cursor-pointer"
+              className="border py-1.5 px-4 rounded bg-gray-100 hover:bg-green-400 hover:cursor-pointer"
               onClick={handleAddAvailability}
             >
               Add Availability
@@ -182,7 +220,7 @@ const App = () => {
               </button>
               <button
                 type="button"
-                className="border py-1.5 px-4 rounded bg-green-400 hover:bg-green-500 hover:cursor-pointer"
+                className="border py-1.5 px-4 rounded bg-gray-100 hover:bg-green-500 hover:cursor-pointer"
                 onClick={() => {
                   setShowNamePrompt(true);
                   setIsSelecting(false);
@@ -216,7 +254,7 @@ const App = () => {
                 </button>
                 <button
                   type="button"
-                  className="border py-1.5 px-4 rounded bg-green-400 hover:bg-green-500 hover:cursor-pointer"
+                  className="border py-1.5 px-4 rounded bg-gray-100 hover:bg-green-500 hover:cursor-pointer"
                   disabled={!tempName.trim()}
                   onClick={() => {
                     setResponses(prev => [...prev, { name: tempName.trim(), cells: Array.from(selectedCells) }]);
